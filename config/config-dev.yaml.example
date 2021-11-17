@@ -1,0 +1,12 @@
+appName: mahasiswaservice
+
+server:
+  port: "9000"
+  log_level: 3
+
+db:
+  host: 127.0.0.1
+  port: 5432
+  dbname: practice
+  user: postgres
+  password: passwords
