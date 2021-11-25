@@ -15,12 +15,14 @@ const (
 	SaveMahasiswa       = `INSERT INTO kampus.mahasiswas (nama, nim, created_at) VALUES ($1, $2, now()) RETURNING id`
 	SaveMahasiswaAlamat = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
 	UpdateMahasiswaNama = `UPDATE kampus.mahasiswas SET nama = $1, updated_at = now() where id = $2`
+	SaveAlamatId        = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
 )
 
 var statement PreparedStatement
 
 type PreparedStatement struct {
 	updateMahasiswaNama *sqlx.Stmt //membungkus query untuk melindungi dari sql inject
+	saveAlamatId        *sqlx.Stmt
 }
 
 type PostgreSQLRepo struct {
@@ -46,6 +48,7 @@ func (p *PostgreSQLRepo) Preparex(query string) *sqlx.Stmt {
 func InitPreparedStatement(m *PostgreSQLRepo) {
 	statement = PreparedStatement{
 		updateMahasiswaNama: m.Preparex(UpdateMahasiswaNama),
+		saveAlamatId:        m.Preparex(SaveAlamatId),
 	}
 }
 
@@ -95,6 +98,29 @@ func (p *PostgreSQLRepo) UpdateMahasiswaNama(dataMahasiswa *models.MahasiswaMode
 
 	if rows < 1 {
 		log.Println("UpdateMahasiswaNama: No Data Changed")
+		return fmt.Errorf(mhsErrors.ErrorNoDataChange)
+	}
+
+	return nil
+}
+
+func (p *PostgreSQLRepo) SaveAlamatId(dataAlamat *models.AlamatIdModels) error {
+	result, err := statement.saveAlamatId.Exec(dataAlamat.Jalan, dataAlamat.NoRumah, dataAlamat.IDMahasiswas)
+
+	if err != nil {
+		log.Println("Failed Query SaveAlamatId : ", err.Error())
+		return fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	rows, err := result.RowsAffected()
+
+	if err != nil {
+		log.Println("Failed RowAffectd SaveAlamatId : ", err.Error())
+		return fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	if rows < 1 {
+		log.Println("SaveAlamatId: No Data Changed")
 		return fmt.Errorf(mhsErrors.ErrorNoDataChange)
 	}
 

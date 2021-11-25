@@ -38,3 +38,14 @@ func (s *service) UpdateMahasiswaNama(req *dto.UpadeMahasiswaNamaReqDTO) error {
 
 	return nil
 }
+
+func (s *service) SaveAlamatId(req *dto.AlamatIdReqDTO) error {
+	dtAlamat := assembler.ToSaveAlamatId(req)
+
+	err := s.repo.SaveAlamatId(dtAlamat)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
