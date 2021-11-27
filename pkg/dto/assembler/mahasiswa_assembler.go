@@ -34,8 +34,8 @@ func ToUpdateMahasiswaNama(d *dto.UpadeMahasiswaNamaReqDTO) *models.MahasiswaMod
 	}
 }
 
-func ToSaveAlamatId(d *dto.AlamatIdReqDTO) *models.AlamatIdModels {
-	return &models.AlamatIdModels{
+func ToSaveAlamatId(d *dto.AlamatIdReqDTO) *models.MahasiswaAlamatModels {
+	return &models.MahasiswaAlamatModels{
 		Jalan:        d.Jalan,
 		NoRumah:      d.NoRumah,
 		IDMahasiswas: d.IDMahasiswas,

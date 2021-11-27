@@ -104,7 +104,7 @@ func (p *PostgreSQLRepo) UpdateMahasiswaNama(dataMahasiswa *models.MahasiswaMode
 	return nil
 }
 
-func (p *PostgreSQLRepo) SaveAlamatId(dataAlamat *models.AlamatIdModels) error {
+func (p *PostgreSQLRepo) SaveAlamatId(dataAlamat *models.MahasiswaAlamatModels) error {
 	result, err := statement.saveAlamatId.Exec(dataAlamat.Jalan, dataAlamat.NoRumah, dataAlamat.IDMahasiswas)
 
 	if err != nil {
