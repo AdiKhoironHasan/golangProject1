@@ -27,6 +27,13 @@ func (s *service) SaveMahasiswaAlamat(req *dto.MahasiswaReqDTO) error {
 	return nil
 }
 
+func (s *service) ShowAllMahasiswaAlamat() (string, error) {
+
+	data, err := s.repo.ShowAllMahasiswaAlamat()
+
+	return data, err
+}
+
 func (s *service) UpdateMahasiswaNama(req *dto.UpadeMahasiswaNamaReqDTO) error {
 
 	dtMhsiswa := assembler.ToUpdateMahasiswaNama(req)

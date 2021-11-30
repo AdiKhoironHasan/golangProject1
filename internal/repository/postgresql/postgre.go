@@ -16,6 +16,8 @@ const (
 	SaveMahasiswaAlamat = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
 	UpdateMahasiswaNama = `UPDATE kampus.mahasiswas SET nama = $1, updated_at = now() where id = $2`
 	SaveAlamatId        = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
+	ShowAllMahasiswa    = `SELECT id, nama, nim FROM kampus.mahasiswas`
+	ShowAllAlamat       = `SELECT id_mahasiswas, jalan, norumah FROM kampus.mahasiswa_alamats`
 )
 
 var statement PreparedStatement
@@ -78,6 +80,15 @@ func (p *PostgreSQLRepo) SaveMahasiswaAlamat(dataMahasiswa *models.MahasiswaMode
 	}
 
 	return tx.Commit() //untuk patenkan atau simpan query(data) ke db
+}
+
+func (p *PostgreSQLRepo) ShowAllMahasiswaAlamat() (string, error) {
+	mhs := "mahasiswa"
+	alm := "alamat"
+
+	Data := mhs + alm
+
+	return Data, nil
 }
 
 func (p *PostgreSQLRepo) UpdateMahasiswaNama(dataMahasiswa *models.MahasiswaModels) error {

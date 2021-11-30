@@ -25,6 +25,7 @@ func NewHttpHandler(e *echo.Echo, srv services.Services) {
 	e.POST("api/v1/latihan/mahasiswa-alamat", handler.SaveMahasiswaAlamat)
 	e.PATCH("api/v1/latihan/mahasiswa", handler.UpdateMahasiswaNama)
 	e.POST("api/v1/latihan/alamat", handler.SaveAlamatId)
+	e.GET("api/v1/latihan/mahasiswa-alamat", handler.ShowAllMahasiswaAlamat)
 
 }
 
@@ -138,6 +139,18 @@ func (h *HttpHandler) SaveMahasiswaAlamat(c echo.Context) error {
 		Success: true,
 		Message: mhsConst.SaveSuccess,
 		Data:    nil,
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HttpHandler) ShowAllMahasiswaAlamat(c echo.Context) error {
+	data, _ := h.service.ShowAllMahasiswaAlamat()
+
+	var resp = dto.ResponseDTO{
+		Success: true,
+		Message: mhsConst.SaveSuccess,
+		Data:    data,
 	}
 
 	return c.JSON(http.StatusOK, resp)
