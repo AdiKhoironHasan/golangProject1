@@ -154,12 +154,12 @@ func (h *HttpHandler) SaveMahasiswaAlamat(c echo.Context) error {
 }
 
 func (h *HttpHandler) ShowAllMahasiswaAlamat(c echo.Context) error {
-	dMhs, _, _ := h.service.ShowAllMahasiswaAlamat()
+	Data, _ := h.service.ShowAllMahasiswaAlamat()
 
 	var resp = dto.ResponseDTO{
 		Success: true,
 		Message: mhsConst.GetDataSuccess,
-		Data:    dMhs,
+		Data:    Data,
 	}
 
 	return c.JSON(http.StatusOK, resp)
