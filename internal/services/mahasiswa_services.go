@@ -27,6 +27,49 @@ func (s *service) SaveMahasiswaAlamat(req *dto.MahasiswaReqDTO) error {
 	return nil
 }
 
+func (s *service) ShowAllMahasiswaAlamat() ([]*dto.MahasiswaAlamatResDTO, error) {
+
+	getMahasiswaMap := make(map[int64]*dto.MahasiswaAlamatResDTO)
+	DataMahasiswaAlamat, err := s.repo.ShowAllMahasiswaAlamat()
+	if err != nil {
+		return nil, err
+	}
+
+	// Data := make([]models.Mahasiswas,len(dMhs))
+
+	// for i, datas := range dMhs{
+	// 	Data[i].id = datas.ID
+
+	// }
+
+	for _, val := range DataMahasiswaAlamat {
+		if _, ok := getMahasiswaMap[val.ID]; !ok {
+			getMahasiswaMap[val.ID] = &dto.MahasiswaAlamatResDTO{
+				ID:   val.ID,
+				Nama: val.Name,
+				Nim:  val.Nim,
+			}
+			getMahasiswaMap[val.ID].Alamats = append(getMahasiswaMap[val.ID].Alamats, &dto.AlamatResDTO{
+				Jalan:   val.Jalan,
+				NoRumah: val.NoRumah,
+			})
+		} else {
+			getMahasiswaMap[val.ID].Alamats = append(getMahasiswaMap[val.ID].Alamats, &dto.AlamatResDTO{
+				Jalan:   val.Jalan,
+				NoRumah: val.NoRumah,
+			})
+		}
+
+	}
+
+	var Data []*dto.MahasiswaAlamatResDTO
+	for _, datas := range getMahasiswaMap {
+		Data = append(Data, datas)
+	}
+
+	return Data, err
+}
+
 func (s *service) UpdateMahasiswaNama(req *dto.UpadeMahasiswaNamaReqDTO) error {
 
 	dtMhsiswa := assembler.ToUpdateMahasiswaNama(req)

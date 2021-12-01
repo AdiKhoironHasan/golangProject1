@@ -12,17 +12,23 @@ import (
 )
 
 const (
-	SaveMahasiswa       = `INSERT INTO kampus.mahasiswas (nama, nim, created_at) VALUES ($1, $2, now()) RETURNING id`
-	SaveMahasiswaAlamat = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
-	UpdateMahasiswaNama = `UPDATE kampus.mahasiswas SET nama = $1, updated_at = now() where id = $2`
-	SaveAlamatId        = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
+	SaveMahasiswa          = `INSERT INTO kampus.mahasiswas (nama, nim, created_at) VALUES ($1, $2, now()) RETURNING id`
+	SaveMahasiswaAlamat    = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
+	UpdateMahasiswaNama    = `UPDATE kampus.mahasiswas SET nama = $1, updated_at = now() where id = $2`
+	SaveAlamatId           = `INSERT INTO kampus.mahasiswa_alamats (jalan, no_rumah, created_at, id_mahasiswas) VALUES ($1,$2, now(), $3)`
+	ShowAllMahasiswa       = `SELECT id, nama, nim FROM kampus.mahasiswas`
+	ShowAllAlamat          = `SELECT id_mahasiswas, jalan, no_rumah FROM kampus.mahasiswa_alamats`
+	ShowAllMahasiswaAlamat = `SELECT a.id, a.nama, a.nim, b.jalan, b.no_rumah from kampus.mahasiswas a JOIN kampus.mahasiswa_alamats b ON a.id = b.id_mahasiswas`
 )
 
 var statement PreparedStatement
 
 type PreparedStatement struct {
-	updateMahasiswaNama *sqlx.Stmt //membungkus query untuk melindungi dari sql inject
-	saveAlamatId        *sqlx.Stmt
+	updateMahasiswaNama    *sqlx.Stmt //membungkus query untuk melindungi dari sql inject
+	saveAlamatId           *sqlx.Stmt
+	showAllMahasiswa       *sqlx.Stmt
+	showAllAlamat          *sqlx.Stmt
+	showAllMahasiswaAlamat *sqlx.Stmt
 }
 
 type PostgreSQLRepo struct {
@@ -47,8 +53,11 @@ func (p *PostgreSQLRepo) Preparex(query string) *sqlx.Stmt {
 
 func InitPreparedStatement(m *PostgreSQLRepo) {
 	statement = PreparedStatement{
-		updateMahasiswaNama: m.Preparex(UpdateMahasiswaNama),
-		saveAlamatId:        m.Preparex(SaveAlamatId),
+		updateMahasiswaNama:    m.Preparex(UpdateMahasiswaNama),
+		saveAlamatId:           m.Preparex(SaveAlamatId),
+		showAllMahasiswa:       m.Preparex(ShowAllMahasiswa),
+		showAllAlamat:          m.Preparex(ShowAllAlamat),
+		showAllMahasiswaAlamat: m.Preparex(ShowAllMahasiswaAlamat),
 	}
 }
 
@@ -78,6 +87,48 @@ func (p *PostgreSQLRepo) SaveMahasiswaAlamat(dataMahasiswa *models.MahasiswaMode
 	}
 
 	return tx.Commit() //untuk patenkan atau simpan query(data) ke db
+}
+
+func (p *PostgreSQLRepo) ShowAllMahasiswaAlamat() ([]*models.ShowMahasiswaAlamatModels, error) {
+	// var dataMahasiswas []*models.MahasiswaModels
+
+	// err := statement.showAllMahasiswa.Select(&dataMahasiswas)
+	// if err != nil {
+	// 	log.Println("Failed Query ShowAllMahasiswa : ", err.Error())
+	// 	return nil, nil, fmt.Errorf(mhsErrors.ErrorDB)
+	// }
+	// fmt.Println("data : ", dataMahasiswas)
+
+	// var dataAlamat []*models.MahasiswaAlamatModels
+	// err = statement.showAllAlamat.Select(&dataAlamat)
+	// if err != nil {
+	// 	log.Println("Failed Query ShowAllAlamat : ", err.Error())
+	// 	return nil, nil, fmt.Errorf(mhsErrors.ErrorDB)
+	// }
+	// fmt.Println("data : ", dataAlamat)
+
+	// Data := make([]models.Mahasiswas, len(dataMahasiswas))
+
+	// for i, datas := range dataMahasiswas {
+	// 	Data[i].id = datas.ID
+	// 	Data[i].nama = datas.Name
+	// 	Data[i].nim = datas.Nim
+	// }
+
+	// x := reflect.TypeOf(dataAlamat).Kind()
+	// fmt.Println(x)
+
+	var AllMahasiswaAlamat []*models.ShowMahasiswaAlamatModels
+
+	err := statement.showAllMahasiswaAlamat.Select(&AllMahasiswaAlamat)
+	if err != nil {
+		log.Println("Failed Query ShowAllMahasiswaAlamat : ", err.Error())
+		return nil, fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	fmt.Println(AllMahasiswaAlamat)
+
+	return AllMahasiswaAlamat, nil
 }
 
 func (p *PostgreSQLRepo) UpdateMahasiswaNama(dataMahasiswa *models.MahasiswaModels) error {
