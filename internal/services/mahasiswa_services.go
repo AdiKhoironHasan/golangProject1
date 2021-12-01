@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/AdiKhoironHasan/golangProject1/internal/models"
 	"github.com/AdiKhoironHasan/golangProject1/internal/repository"
 	"github.com/AdiKhoironHasan/golangProject1/pkg/dto"
 	"github.com/AdiKhoironHasan/golangProject1/pkg/dto/assembler"
@@ -27,11 +28,21 @@ func (s *service) SaveMahasiswaAlamat(req *dto.MahasiswaReqDTO) error {
 	return nil
 }
 
-func (s *service) ShowAllMahasiswaAlamat() (string, error) {
+func (s *service) ShowAllMahasiswaAlamat() ([]*models.MahasiswaModels, []*models.MahasiswaAlamatModels, error) {
 
-	data, err := s.repo.ShowAllMahasiswaAlamat()
+	dMhs, dAlmt, err := s.repo.ShowAllMahasiswaAlamat()
+	if err != nil {
+		return nil, nil, err
+	}
 
-	return data, err
+	// Data := make([]models.Mahasiswas,len(dMhs))
+
+	// for i, datas := range dMhs{
+	// 	Data[i].id = datas.ID
+
+	// }
+
+	return dMhs, dAlmt, err
 }
 
 func (s *service) UpdateMahasiswaNama(req *dto.UpadeMahasiswaNamaReqDTO) error {

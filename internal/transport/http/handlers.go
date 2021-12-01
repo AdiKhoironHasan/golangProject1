@@ -1,8 +1,10 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"os"
+	"reflect"
 
 	"github.com/AdiKhoironHasan/golangProject1/internal/services"
 	mhsConst "github.com/AdiKhoironHasan/golangProject1/pkg/common/const"
@@ -43,13 +45,14 @@ func (h *HttpHandler) Ping(c echo.Context) error {
 }
 
 func (h *HttpHandler) UpdateMahasiswaNama(c echo.Context) error {
-	postDTO := dto.UpadeMahasiswaNamaReqDTO{}
-	if err := c.Bind(&postDTO); err != nil { //bind = req ke variabel
+	patchDTO := dto.UpadeMahasiswaNamaReqDTO{}
+	fmt.Println("type : ", reflect.TypeOf(patchDTO).Kind())
+	if err := c.Bind(&patchDTO); err != nil { //bind = req ke variabel
 		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	err := postDTO.Validate()
+	err := patchDTO.Validate()
 	if err != nil {
 		log.Error(err.Error())
 		return c.JSON(getStatusCode(err), dto.ResponseDTO{
@@ -59,7 +62,7 @@ func (h *HttpHandler) UpdateMahasiswaNama(c echo.Context) error {
 		})
 	}
 
-	err = h.service.UpdateMahasiswaNama(&postDTO)
+	err = h.service.UpdateMahasiswaNama(&patchDTO)
 	if err != nil {
 		log.Error(err.Error())
 		return c.JSON(getStatusCode(err), dto.ResponseDTO{
@@ -105,7 +108,13 @@ func (h *HttpHandler) SaveAlamatId(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, nil)
+	var resp = dto.ResponseDTO{
+		Success: true,
+		Message: mhsConst.SaveSuccess,
+		Data:    nil,
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }
 
 func (h *HttpHandler) SaveMahasiswaAlamat(c echo.Context) error {
@@ -145,12 +154,12 @@ func (h *HttpHandler) SaveMahasiswaAlamat(c echo.Context) error {
 }
 
 func (h *HttpHandler) ShowAllMahasiswaAlamat(c echo.Context) error {
-	data, _ := h.service.ShowAllMahasiswaAlamat()
+	dMhs, _, _ := h.service.ShowAllMahasiswaAlamat()
 
 	var resp = dto.ResponseDTO{
 		Success: true,
-		Message: mhsConst.SaveSuccess,
-		Data:    data,
+		Message: mhsConst.GetDataSuccess,
+		Data:    dMhs,
 	}
 
 	return c.JSON(http.StatusOK, resp)

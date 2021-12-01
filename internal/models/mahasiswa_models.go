@@ -13,17 +13,17 @@ type MahasiswaAlamatModels struct {
 	IDMahasiswas int64  `db:"id_mahasiswas"` //sama dengan field db
 }
 
-type DBAlamat struct {
-	id      int64
-	jalan   string
-	norumah string
-}
+// type DBAlamat struct {
+// 	id      int64
+// 	jalan   string
+// 	norumah string
+// }
 
-type DBMahasiswas struct {
-	id   int64
-	nama string
-	nim  string
-}
+// type DBMahasiswas struct {
+// 	id   int64
+// 	nama string
+// 	nim  string
+// }
 
 type Alamat struct {
 	id      int64
@@ -38,5 +38,5 @@ type Mahasiswas struct {
 	alamats []Alamat
 }
 
-type DBmhs DBMahasiswas
-type DBalmt Alamat
+// type DBmhs DBMahasiswas
+// type DBalmt Alamat
