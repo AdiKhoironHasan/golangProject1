@@ -19,6 +19,9 @@ const (
 	ShowAllMahasiswa       = `SELECT id, nama, nim FROM kampus.mahasiswas`
 	ShowAllAlamat          = `SELECT id_mahasiswas, jalan, no_rumah FROM kampus.mahasiswa_alamats`
 	ShowAllMahasiswaAlamat = `SELECT a.id, a.nama, a.nim, b.jalan, b.no_rumah from kampus.mahasiswas a JOIN kampus.mahasiswa_alamats b ON a.id = b.id_mahasiswas`
+
+	SaveDosen       = `INSERT INTO kampus.dosens (nama, nidn, created_at) VALUES ($1, $2, now()) RETURNING id`
+	SaveDosenAlamat = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
 )
 
 var statement PreparedStatement
@@ -176,4 +179,34 @@ func (p *PostgreSQLRepo) SaveAlamatId(dataAlamat *models.MahasiswaAlamatModels) 
 	}
 
 	return nil
+}
+
+// DOSEN
+
+func (p *PostgreSQLRepo) SaveDosenAlamat(dataDosen *models.DosenModels, dataAlamat []*models.DosenAlamatModels) error {
+	tx, err := p.Conn.Beginx()
+	if err != nil {
+		log.Println("Failed Begin Tx SaveDosen Alamat : ", err.Error())
+		return fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	var idDosen int64
+	tx.QueryRow(SaveDosen, dataDosen.Name, dataDosen.Nidn).Scan(&idDosen)
+
+	if err != nil {
+		tx.Rollback()
+		log.Println("Failed Query SaveDosen: ", err.Error())
+		return fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	for _, val := range dataAlamat {
+		_, err = tx.Exec(SaveDosenAlamat, val.Jalan, val.NoRumah, idDosen)
+		if err != nil {
+			tx.Rollback()
+			log.Println("Failed Query SaveDosenAlamat : ", err.Error())
+			return fmt.Errorf(mhsErrors.ErrorDB)
+		}
+	}
+
+	return tx.Commit()
 }

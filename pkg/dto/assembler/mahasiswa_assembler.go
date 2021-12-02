@@ -41,3 +41,26 @@ func ToSaveAlamatId(d *dto.AlamatIdReqDTO) *models.MahasiswaAlamatModels {
 		IDMahasiswas: d.IDMahasiswas,
 	}
 }
+
+// DOSEN
+func ToSaveDosenAlamat(dataAlamat *dto.AlamatDosenReqDTO) *models.DosenAlamatModels {
+	return &models.DosenAlamatModels{
+		Jalan:   dataAlamat.Jalan,
+		NoRumah: dataAlamat.NoRumah,
+	}
+}
+
+func ToSaveDosenAlamats(dataAlamats []dto.AlamatDosenReqDTO) []*models.DosenAlamatModels {
+	var mds []*models.DosenAlamatModels
+	for _, data := range dataAlamats {
+		mds = append(mds, ToSaveDosenAlamat(&data))
+	}
+	return mds
+}
+
+func ToSaveDosen(dataDosen *dto.DosenReqDTO) *models.DosenModels {
+	return &models.DosenModels{
+		Name: dataDosen.Nama,
+		Nidn: dataDosen.Nidn,
+	}
+}

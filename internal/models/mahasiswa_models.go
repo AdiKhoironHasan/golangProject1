@@ -48,3 +48,17 @@ type ShowMahasiswaAlamatModels struct {
 
 // type DBmhs DBMahasiswas
 // type DBalmt Alamat
+
+// DOSEN
+type DosenModels struct {
+	ID   int64  `db:"id"`
+	Name string `db:"nama"`
+	Nidn string `db:"nim"`
+}
+
+type DosenAlamatModels struct {
+	ID           int64  `db:"id"`
+	Jalan        string `db:"jalan"`
+	NoRumah      string `db:"no_rumah"`
+	IDMahasiswas int64  `db:"id_mahasiswas"` //sama dengan field db
+}

@@ -35,13 +35,6 @@ func (s *service) ShowAllMahasiswaAlamat() ([]*dto.MahasiswaAlamatResDTO, error)
 		return nil, err
 	}
 
-	// Data := make([]models.Mahasiswas,len(dMhs))
-
-	// for i, datas := range dMhs{
-	// 	Data[i].id = datas.ID
-
-	// }
-
 	for _, val := range DataMahasiswaAlamat {
 		if _, ok := getMahasiswaMap[val.ID]; !ok {
 			getMahasiswaMap[val.ID] = &dto.MahasiswaAlamatResDTO{
@@ -86,6 +79,19 @@ func (s *service) SaveAlamatId(req *dto.AlamatIdReqDTO) error {
 	dtAlamat := assembler.ToSaveAlamatId(req)
 
 	err := s.repo.SaveAlamatId(dtAlamat)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DOSEN
+func (s *service) SaveDosenAlamat(req *dto.DosenReqDTO) error {
+	dtaAlamat := assembler.ToSaveDosenAlamats(req.Alamats)
+	dtDosen := assembler.ToSaveDosen(req)
+
+	err := s.repo.SaveDosenAlamat(dtDosen, dtaAlamat)
 	if err != nil {
 		return err
 	}
