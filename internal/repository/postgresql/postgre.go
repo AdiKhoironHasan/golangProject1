@@ -7,7 +7,9 @@ import (
 	"github.com/AdiKhoironHasan/golangProject1/internal/models"
 	"github.com/AdiKhoironHasan/golangProject1/internal/repository"
 
+	dsnErrors "github.com/AdiKhoironHasan/golangProject1/pkg/errors"
 	mhsErrors "github.com/AdiKhoironHasan/golangProject1/pkg/errors"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -187,7 +189,7 @@ func (p *PostgreSQLRepo) SaveDosenAlamat(dataDosen *models.DosenModels, dataAlam
 	tx, err := p.Conn.Beginx()
 	if err != nil {
 		log.Println("Failed Begin Tx SaveDosen Alamat : ", err.Error())
-		return fmt.Errorf(mhsErrors.ErrorDB)
+		return fmt.Errorf(dsnErrors.ErrorDB)
 	}
 
 	var idDosen int64
@@ -196,7 +198,7 @@ func (p *PostgreSQLRepo) SaveDosenAlamat(dataDosen *models.DosenModels, dataAlam
 	if err != nil {
 		tx.Rollback()
 		log.Println("Failed Query SaveDosen: ", err.Error())
-		return fmt.Errorf(mhsErrors.ErrorDB)
+		return fmt.Errorf(dsnErrors.ErrorDB)
 	}
 
 	for _, val := range dataAlamat {
@@ -204,7 +206,7 @@ func (p *PostgreSQLRepo) SaveDosenAlamat(dataDosen *models.DosenModels, dataAlam
 		if err != nil {
 			tx.Rollback()
 			log.Println("Failed Query SaveDosenAlamat : ", err.Error())
-			return fmt.Errorf(mhsErrors.ErrorDB)
+			return fmt.Errorf(dsnErrors.ErrorDB)
 		}
 	}
 
