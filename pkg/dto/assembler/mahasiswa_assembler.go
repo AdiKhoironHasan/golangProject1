@@ -64,3 +64,10 @@ func ToSaveDosen(dataDosen *dto.DosenReqDTO) *models.DosenModels {
 		Nidn: dataDosen.Nidn,
 	}
 }
+
+func ToUpdateDosenNama(dataDosen *dto.UpdateDosenNamaReqDTO) *models.DosenModels {
+	return &models.DosenModels{
+		Name: dataDosen.Nama,
+		ID:   dataDosen.ID,
+	}
+}

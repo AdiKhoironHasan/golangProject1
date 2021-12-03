@@ -61,3 +61,14 @@ type AlamatDosenReqDTO struct {
 	Jalan   string `json:"jalan"`
 	NoRumah string `json:"no_rumah"`
 }
+
+type UpdateDosenNamaReqDTO struct {
+	Nama string `json:"nama" valid:"required" validname:"nama"`
+	ID   int64  `json:"id" valid:"required,integer,non_zero" validname:"id"`
+}
+
+func (dto *UpdateDosenNamaReqDTO) Validate() error {
+	v := validator.NewValidate(dto)
+
+	return v.Validate()
+}

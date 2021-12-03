@@ -24,6 +24,7 @@ const (
 
 	SaveDosen       = `INSERT INTO kampus.dosens (nama, nidn, created_at) VALUES ($1, $2, now()) RETURNING id`
 	SaveDosenAlamat = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
+	UpdateDosenNama = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
 )
 
 var statement PreparedStatement
@@ -34,6 +35,8 @@ type PreparedStatement struct {
 	showAllMahasiswa       *sqlx.Stmt
 	showAllAlamat          *sqlx.Stmt
 	showAllMahasiswaAlamat *sqlx.Stmt
+
+	updateDosenNama *sqlx.Stmt
 }
 
 type PostgreSQLRepo struct {
@@ -63,6 +66,8 @@ func InitPreparedStatement(m *PostgreSQLRepo) {
 		showAllMahasiswa:       m.Preparex(ShowAllMahasiswa),
 		showAllAlamat:          m.Preparex(ShowAllAlamat),
 		showAllMahasiswaAlamat: m.Preparex(ShowAllMahasiswaAlamat),
+
+		updateDosenNama: m.Preparex(UpdateDosenNama),
 	}
 }
 
@@ -211,4 +216,27 @@ func (p *PostgreSQLRepo) SaveDosenAlamat(dataDosen *models.DosenModels, dataAlam
 	}
 
 	return tx.Commit()
+}
+
+func (p *PostgreSQLRepo) UpdateDosenNama(dataDosen *models.DosenModels) error {
+	result, err := statement.updateDosenNama.Exec(dataDosen.Name, dataDosen.ID)
+
+	if err != nil {
+		log.Println("Failed Query UpdateDosenNama : ", err.Error())
+		return fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	rows, err := result.RowsAffected()
+
+	if err != nil {
+		log.Println("Failed RowAffectd UpdateDosenNama : ", err.Error())
+		return fmt.Errorf(mhsErrors.ErrorDB)
+	}
+
+	if rows < 1 {
+		log.Println("UpdateDosenNama: No Data Changed")
+		return fmt.Errorf(mhsErrors.ErrorNoDataChange)
+	}
+
+	return nil
 }

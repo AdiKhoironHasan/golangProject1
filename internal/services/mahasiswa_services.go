@@ -98,3 +98,14 @@ func (s *service) SaveDosenAlamat(req *dto.DosenReqDTO) error {
 
 	return nil
 }
+
+func (s *service) UpdateDosenNama(req *dto.UpdateDosenNamaReqDTO) error {
+	dtDosen := assembler.ToUpdateDosenNama(req)
+
+	err := s.repo.UpdateDosenNama(dtDosen)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

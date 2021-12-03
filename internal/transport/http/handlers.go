@@ -30,6 +30,7 @@ func NewHttpHandler(e *echo.Echo, srv services.Services) {
 	e.GET("api/v1/latihan/mahasiswa-alamat", handler.ShowAllMahasiswaAlamat)
 
 	e.POST("api/v1/latihan/dosen-alamat", handler.SaveDosenAlamat)
+	e.PATCH("api/v1/latihan/mahasiswa", handler.UpdateDosenNama)
 
 }
 
@@ -199,6 +200,44 @@ func (h *HttpHandler) SaveDosenAlamat(c echo.Context) error {
 	var resp = dto.ResponseDTO{
 		Success: true,
 		Message: mhsConst.SaveSuccess,
+		Data:    nil,
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// DOSEN
+
+func (h *HttpHandler) UpdateDosenNama(c echo.Context) error {
+	patchDTO := dto.UpdateDosenNamaReqDTO{}
+	if err := c.Bind(&patchDTO); err != nil {
+		log.Error(err.Error())
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	err := patchDTO.Validate()
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(getStatusCode(err), dto.ResponseDTO{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	err = h.service.UpdateDosenNama(&patchDTO)
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(getStatusCode(err), dto.ResponseDTO{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	var resp = dto.ResponseDTO{
+		Success: true,
+		Message: mhsConst.UpdateSuccess,
 		Data:    nil,
 	}
 

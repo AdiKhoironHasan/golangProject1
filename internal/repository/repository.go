@@ -9,4 +9,5 @@ type Repository interface {
 	ShowAllMahasiswaAlamat() ([]*models.ShowMahasiswaAlamatModels, error)
 
 	SaveDosenAlamat(dataDosen *models.DosenModels, dataAlamat []*models.DosenAlamatModels) error
+	UpdateDosenNama(dataDosen *models.DosenModels) error
 }
