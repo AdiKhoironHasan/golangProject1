@@ -62,3 +62,11 @@ type DosenAlamatModels struct {
 	NoRumah string `db:"no_rumah"`
 	IdDosen int64  `db:"id_mahasiswas"` //sama dengan field db
 }
+
+type ShowAllDosenAlamatModels struct {
+	ID      int64  `db:"id"`
+	Name    string `db:"nama"`
+	Nidn    string `db:"nidn"`
+	Jalan   string `db:"jalan"`
+	NoRumah string `db:"no_rumah"`
+}

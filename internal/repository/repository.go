@@ -11,4 +11,5 @@ type Repository interface {
 	SaveDosenAlamat(dataDosen *models.DosenModels, dataAlamat []*models.DosenAlamatModels) error
 	UpdateDosenNama(dataDosen *models.DosenModels) error
 	SaveDosenAlamatByID(dataDosenAlamat *models.DosenAlamatModels) error
+	ShowAllDosenAlamat() ([]*models.ShowAllDosenAlamatModels, error)
 }

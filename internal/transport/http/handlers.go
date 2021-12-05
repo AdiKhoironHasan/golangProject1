@@ -32,6 +32,7 @@ func NewHttpHandler(e *echo.Echo, srv services.Services) {
 	e.POST("api/v1/latihan/dosen-alamat", handler.SaveDosenAlamat)
 	e.PATCH("api/v1/latihan/dosen", handler.UpdateDosenNama)
 	e.POST("api/v1/latihan/alamat-dosen", handler.SaveDosenAlamatByID)
+	e.GET("api/v1/latihan/dosen-alamat", handler.ShowAllDosenAlamat)
 
 }
 
@@ -279,6 +280,27 @@ func (h *HttpHandler) SaveDosenAlamatByID(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HttpHandler) ShowAllDosenAlamat(c echo.Context) error {
+	result, err := h.service.ShowAllDosenAlamat()
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(getStatusCode(err), dto.ResponseDTO{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	var resp = dto.ResponseDTO{
+		Success: true,
+		Message: mhsConst.GetDataSuccess,
+		Data:    result,
+	}
+
+	return c.JSON(http.StatusOK, resp)
+
 }
 
 func getStatusCode(err error) int {

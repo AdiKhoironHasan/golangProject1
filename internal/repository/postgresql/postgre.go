@@ -26,6 +26,7 @@ const (
 	SaveDosenAlamat     = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
 	UpdateDosenNama     = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
 	SaveDosenAlamatByID = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
+	ShowAllDosenAlamat  = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens `
 )
 
 var statement PreparedStatement
@@ -39,6 +40,7 @@ type PreparedStatement struct {
 
 	updateDosenNama     *sqlx.Stmt
 	saveDosenAlamatByID *sqlx.Stmt
+	showAllDosenAlamat  *sqlx.Stmt
 }
 
 type PostgreSQLRepo struct {
@@ -71,6 +73,7 @@ func InitPreparedStatement(m *PostgreSQLRepo) {
 
 		updateDosenNama:     m.Preparex(UpdateDosenNama),
 		saveDosenAlamatByID: m.Preparex(SaveDosenAlamatByID),
+		showAllDosenAlamat:  m.Preparex(ShowAllDosenAlamat),
 	}
 }
 
@@ -265,4 +268,16 @@ func (p *PostgreSQLRepo) SaveDosenAlamatByID(dataDosenAlamat *models.DosenAlamat
 	}
 
 	return nil
+}
+
+func (p *PostgreSQLRepo) ShowAllDosenAlamat() ([]*models.ShowAllDosenAlamatModels, error) {
+	var AllDosenAlamat []*models.ShowAllDosenAlamatModels
+
+	err := statement.showAllDosenAlamat.Select(&AllDosenAlamat)
+	if err != nil {
+		log.Println("Failed Query ShowAllDosenAlamat : ", err.Error())
+		return nil, fmt.Errorf(dsnErrors.ErrorDB)
+	}
+
+	return AllDosenAlamat, nil
 }

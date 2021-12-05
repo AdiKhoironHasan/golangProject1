@@ -120,3 +120,39 @@ func (s *service) SaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) error {
 
 	return nil
 }
+
+func (s *service) ShowAllDosenAlamat() ([]*dto.DosenAlamatResDTO, error) {
+	getDosensMap := make(map[int]*dto.DosenAlamatResDTO)
+
+	dataDosenAlamat, err := s.repo.ShowAllDosenAlamat()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, val := range dataDosenAlamat {
+		if _, ok := getDosensMap[int(val.ID)]; !ok {
+			getDosensMap[int(val.ID)] = &dto.DosenAlamatResDTO{
+				ID:   val.ID,
+				Nama: val.Name,
+				Nidn: val.Nidn,
+			}
+			getDosensMap[int(val.ID)].Alamats = append(getDosensMap[int(val.ID)].Alamats, &dto.AlamatDosenResDTO{
+				Jalan:   val.Jalan,
+				NoRumah: val.NoRumah,
+			})
+		} else {
+			getDosensMap[int(val.ID)].Alamats = append(getDosensMap[int(val.ID)].Alamats, &dto.AlamatDosenResDTO{
+				Jalan:   val.Jalan,
+				NoRumah: val.NoRumah,
+			})
+		}
+	}
+
+	var Data []*dto.DosenAlamatResDTO
+	for _, datas := range getDosensMap {
+		Data = append(Data, datas)
+	}
+
+	return Data, nil
+
+}
