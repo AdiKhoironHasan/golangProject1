@@ -12,4 +12,5 @@ type Services interface {
 
 	SaveDosenAlamat(req *dto.DosenReqDTO) error
 	UpdateDosenNama(req *dto.UpdateDosenNamaReqDTO) error
+	SaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) error
 }

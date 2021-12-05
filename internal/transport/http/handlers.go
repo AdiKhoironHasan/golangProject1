@@ -30,7 +30,8 @@ func NewHttpHandler(e *echo.Echo, srv services.Services) {
 	e.GET("api/v1/latihan/mahasiswa-alamat", handler.ShowAllMahasiswaAlamat)
 
 	e.POST("api/v1/latihan/dosen-alamat", handler.SaveDosenAlamat)
-	e.PATCH("api/v1/latihan/mahasiswa", handler.UpdateDosenNama)
+	e.PATCH("api/v1/latihan/dosen", handler.UpdateDosenNama)
+	e.POST("api/v1/latihan/alamat-dosen", handler.SaveDosenAlamatByID)
 
 }
 
@@ -121,7 +122,7 @@ func (h *HttpHandler) SaveAlamatId(c echo.Context) error {
 }
 
 func (h *HttpHandler) SaveMahasiswaAlamat(c echo.Context) error {
-	postDTO := dto.MahasiswaReqDTO{}
+	postDTO := dto.MahasiswaReqDTO{}         //{} untuk memberi nilai default yaitu nil
 	if err := c.Bind(&postDTO); err != nil { //bind = req ke variabel
 		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
@@ -238,6 +239,42 @@ func (h *HttpHandler) UpdateDosenNama(c echo.Context) error {
 	var resp = dto.ResponseDTO{
 		Success: true,
 		Message: mhsConst.UpdateSuccess,
+		Data:    nil,
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HttpHandler) SaveDosenAlamatByID(c echo.Context) error {
+	postDTO := dto.AlamatDosenByIDReqDTO{}
+	if err := c.Bind(&postDTO); err != nil {
+		log.Error(err.Error())
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	err := postDTO.Validate()
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(getStatusCode(err), dto.ResponseDTO{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	err = h.service.SaveDosenAlamatByID(&postDTO)
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(getStatusCode(err), dto.ResponseDTO{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	var resp = dto.ResponseDTO{
+		Success: true,
+		Message: mhsConst.SaveSuccess,
 		Data:    nil,
 	}
 

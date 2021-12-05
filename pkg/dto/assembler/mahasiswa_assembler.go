@@ -71,3 +71,11 @@ func ToUpdateDosenNama(dataDosen *dto.UpdateDosenNamaReqDTO) *models.DosenModels
 		ID:   dataDosen.ID,
 	}
 }
+
+func ToSaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) *models.DosenAlamatModels {
+	return &models.DosenAlamatModels{
+		Jalan:   req.Jalan,
+		NoRumah: req.NoRumah,
+		IdDosen: req.IdDosen,
+	}
+}

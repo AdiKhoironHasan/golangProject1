@@ -109,3 +109,14 @@ func (s *service) UpdateDosenNama(req *dto.UpdateDosenNamaReqDTO) error {
 
 	return nil
 }
+
+func (s *service) SaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) error {
+	dtAlamatDOsen := assembler.ToSaveDosenAlamatByID(req)
+
+	err := s.repo.SaveDosenAlamatByID(dtAlamatDOsen)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

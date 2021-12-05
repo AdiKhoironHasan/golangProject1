@@ -72,3 +72,15 @@ func (dto *UpdateDosenNamaReqDTO) Validate() error {
 
 	return v.Validate()
 }
+
+type AlamatDosenByIDReqDTO struct {
+	Jalan   string `json:"jalan"`
+	NoRumah string `json:"no_rumah"`
+	IdDosen int64  `json:"id_dosen" valid:"required,integer,non_zero" validname:"id_dosen"`
+}
+
+func (dto *AlamatDosenByIDReqDTO) Validate() error { //method yang menempel ke AlamatDosen
+	v := validator.NewValidate(dto)
+
+	return v.Validate()
+}
