@@ -22,11 +22,12 @@ const (
 	ShowAllAlamat          = `SELECT id_mahasiswas, jalan, no_rumah FROM kampus.mahasiswa_alamats`
 	ShowAllMahasiswaAlamat = `SELECT a.id, a.nama, a.nim, b.jalan, b.no_rumah from kampus.mahasiswas a JOIN kampus.mahasiswa_alamats b ON a.id = b.id_mahasiswas`
 
-	SaveDosen           = `INSERT INTO kampus.dosens (nama, nidn, created_at) VALUES ($1, $2, now()) RETURNING id`
-	SaveDosenAlamat     = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
-	UpdateDosenNama     = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
-	SaveDosenAlamatByID = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
-	ShowAllDosenAlamat  = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens `
+	SaveDosen                 = `INSERT INTO kampus.dosens (nama, nidn, created_at) VALUES ($1, $2, now()) RETURNING id`
+	SaveDosenAlamat           = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
+	UpdateDosenNama           = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
+	SaveDosenAlamatByID       = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
+	ShowAllDosenAlamat        = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens `
+	ShowAllDosenAlamatByParam = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens AND a.id =$1 OR a.nama = $2 OR a.nidn = $3 OR 1 = $4`
 )
 
 var statement PreparedStatement
@@ -38,9 +39,10 @@ type PreparedStatement struct {
 	showAllAlamat          *sqlx.Stmt
 	showAllMahasiswaAlamat *sqlx.Stmt
 
-	updateDosenNama     *sqlx.Stmt
-	saveDosenAlamatByID *sqlx.Stmt
-	showAllDosenAlamat  *sqlx.Stmt
+	updateDosenNama           *sqlx.Stmt
+	saveDosenAlamatByID       *sqlx.Stmt
+	showAllDosenAlamat        *sqlx.Stmt
+	showAllDosenAlamatByParam *sqlx.Stmt
 }
 
 type PostgreSQLRepo struct {
@@ -71,9 +73,10 @@ func InitPreparedStatement(m *PostgreSQLRepo) {
 		showAllAlamat:          m.Preparex(ShowAllAlamat),
 		showAllMahasiswaAlamat: m.Preparex(ShowAllMahasiswaAlamat),
 
-		updateDosenNama:     m.Preparex(UpdateDosenNama),
-		saveDosenAlamatByID: m.Preparex(SaveDosenAlamatByID),
-		showAllDosenAlamat:  m.Preparex(ShowAllDosenAlamat),
+		updateDosenNama:           m.Preparex(UpdateDosenNama),
+		saveDosenAlamatByID:       m.Preparex(SaveDosenAlamatByID),
+		showAllDosenAlamat:        m.Preparex(ShowAllDosenAlamat),
+		showAllDosenAlamatByParam: m.Preparex(ShowAllDosenAlamatByParam),
 	}
 }
 
@@ -270,10 +273,38 @@ func (p *PostgreSQLRepo) SaveDosenAlamatByID(dataDosenAlamat *models.DosenAlamat
 	return nil
 }
 
-func (p *PostgreSQLRepo) ShowAllDosenAlamat() ([]*models.ShowAllDosenAlamatModels, error) {
+func (p *PostgreSQLRepo) ShowAllDosenAlamat(req *models.DosenModels) ([]*models.ShowAllDosenAlamatModels, error) {
+	var dataReq struct {
+		id      int64
+		nama    string
+		nidn    string
+		kondisi int64
+	}
+
+	if req.ID > 0 {
+		dataReq.id = req.ID
+		dataReq.kondisi = 0
+	}
+	if req.Name != "" {
+		dataReq.nama = req.Name
+		dataReq.kondisi = 0
+	}
+	if req.Nidn != "" {
+		dataReq.nidn = req.Nidn
+		dataReq.kondisi = 0
+	}
+	if dataReq.id == 0 && dataReq.nama == "" && dataReq.nidn == "" {
+		dataReq.kondisi = 1
+	}
+
+	fmt.Println("id_dosen: ", dataReq.id)
+	fmt.Println("nama: ", dataReq.nama)
+	fmt.Println("nidn: ", dataReq.nidn)
+	fmt.Println("kondisi: ", dataReq.kondisi)
+
 	var AllDosenAlamat []*models.ShowAllDosenAlamatModels
 
-	err := statement.showAllDosenAlamat.Select(&AllDosenAlamat)
+	err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, dataReq.id, dataReq.nama, dataReq.nidn, dataReq.kondisi)
 	if err != nil {
 		log.Println("Failed Query ShowAllDosenAlamat : ", err.Error())
 		return nil, fmt.Errorf(dsnErrors.ErrorDB)

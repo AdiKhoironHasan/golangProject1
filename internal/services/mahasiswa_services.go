@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/AdiKhoironHasan/golangProject1/internal/repository"
 	"github.com/AdiKhoironHasan/golangProject1/pkg/dto"
 	"github.com/AdiKhoironHasan/golangProject1/pkg/dto/assembler"
@@ -121,10 +123,12 @@ func (s *service) SaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) error {
 	return nil
 }
 
-func (s *service) ShowAllDosenAlamat() ([]*dto.DosenAlamatResDTO, error) {
+func (s *service) ShowAllDosenAlamat(req *dto.DosenParamReqDTO) ([]*dto.DosenAlamatResDTO, error) {
+	dtDosen := assembler.ToShowAllDosenAlamat(req)
 	getDosensMap := make(map[int]*dto.DosenAlamatResDTO)
 
-	dataDosenAlamat, err := s.repo.ShowAllDosenAlamat()
+	fmt.Println("dataDosen: ", dtDosen)
+	dataDosenAlamat, err := s.repo.ShowAllDosenAlamat(dtDosen)
 	if err != nil {
 		return nil, err
 	}
@@ -154,5 +158,4 @@ func (s *service) ShowAllDosenAlamat() ([]*dto.DosenAlamatResDTO, error) {
 	}
 
 	return Data, nil
-
 }

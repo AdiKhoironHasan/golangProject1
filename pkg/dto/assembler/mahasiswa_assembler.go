@@ -79,3 +79,11 @@ func ToSaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) *models.DosenAlamatMo
 		IdDosen: req.IdDosen,
 	}
 }
+
+func ToShowAllDosenAlamat(req *dto.DosenParamReqDTO) *models.DosenModels {
+	return &models.DosenModels{
+		ID:   req.IdDosen,
+		Name: req.Nama,
+		Nidn: req.Nidn,
+	}
+}

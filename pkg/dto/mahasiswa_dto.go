@@ -84,3 +84,18 @@ func (dto *AlamatDosenByIDReqDTO) Validate() error { //method yang menempel ke A
 
 	return v.Validate()
 }
+
+type DosenParamReqDTO struct {
+	IdDosen int64  `json:"id_dosen" validname:"id_dosen"`
+	Nama    string `json:"nama" validname:"nama"`
+	Nidn    string `json:"nidn" validname:"nidn"`
+}
+
+func (dto *DosenParamReqDTO) Validate() error {
+	v := validator.NewValidate(dto)
+
+	return v.Validate()
+}
+
+// dosen by param baiknya digabung dosenreq apa buat baru
+// fungsi validname required, nonzero

@@ -283,7 +283,23 @@ func (h *HttpHandler) SaveDosenAlamatByID(c echo.Context) error {
 }
 
 func (h *HttpHandler) ShowAllDosenAlamat(c echo.Context) error {
-	result, err := h.service.ShowAllDosenAlamat()
+	getDTO := dto.DosenParamReqDTO{}
+	if err := c.Bind(&getDTO); err != nil {
+		log.Error(err.Error())
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	err := getDTO.Validate()
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(getStatusCode(err), dto.ResponseDTO{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	result, err := h.service.ShowAllDosenAlamat(&getDTO)
 	if err != nil {
 		log.Error(err.Error())
 		return c.JSON(getStatusCode(err), dto.ResponseDTO{
