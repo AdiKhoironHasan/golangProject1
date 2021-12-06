@@ -86,9 +86,9 @@ func (dto *AlamatDosenByIDReqDTO) Validate() error { //method yang menempel ke A
 }
 
 type DosenParamReqDTO struct {
-	IdDosen int64  `json:"id_dosen" validname:"id_dosen"`
-	Nama    string `json:"nama" validname:"nama"`
-	Nidn    string `json:"nidn" validname:"nidn"`
+	IdDosen int64  `json:"id_dosen" validname:"id_dosen" query:"id_dosen"`
+	Nama    string `json:"nama" validname:"nama" query:"nama"`
+	Nidn    string `json:"nidn" validname:"nidn" query:"nidn"`
 }
 
 func (dto *DosenParamReqDTO) Validate() error {
