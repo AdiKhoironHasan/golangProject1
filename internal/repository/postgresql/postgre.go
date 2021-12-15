@@ -27,7 +27,7 @@ const (
 	UpdateDosenNama           = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
 	SaveDosenAlamatByID       = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
 	ShowAllDosenAlamat        = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens `
-	ShowAllDosenAlamatByParam = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens AND a.id =$1 OR a.nama = $2 OR a.nidn = $3 OR 1 = $4`
+	ShowAllDosenAlamatByParam = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens AND $1`
 )
 
 var statement PreparedStatement
@@ -109,34 +109,6 @@ func (p *PostgreSQLRepo) SaveMahasiswaAlamat(dataMahasiswa *models.MahasiswaMode
 }
 
 func (p *PostgreSQLRepo) ShowAllMahasiswaAlamat() ([]*models.ShowMahasiswaAlamatModels, error) {
-	// var dataMahasiswas []*models.MahasiswaModels
-
-	// err := statement.showAllMahasiswa.Select(&dataMahasiswas)
-	// if err != nil {
-	// 	log.Println("Failed Query ShowAllMahasiswa : ", err.Error())
-	// 	return nil, nil, fmt.Errorf(mhsErrors.ErrorDB)
-	// }
-	// fmt.Println("data : ", dataMahasiswas)
-
-	// var dataAlamat []*models.MahasiswaAlamatModels
-	// err = statement.showAllAlamat.Select(&dataAlamat)
-	// if err != nil {
-	// 	log.Println("Failed Query ShowAllAlamat : ", err.Error())
-	// 	return nil, nil, fmt.Errorf(mhsErrors.ErrorDB)
-	// }
-	// fmt.Println("data : ", dataAlamat)
-
-	// Data := make([]models.Mahasiswas, len(dataMahasiswas))
-
-	// for i, datas := range dataMahasiswas {
-	// 	Data[i].id = datas.ID
-	// 	Data[i].nama = datas.Name
-	// 	Data[i].nim = datas.Nim
-	// }
-
-	// x := reflect.TypeOf(dataAlamat).Kind()
-	// fmt.Println(x)
-
 	var AllMahasiswaAlamat []*models.ShowMahasiswaAlamatModels
 
 	err := statement.showAllMahasiswaAlamat.Select(&AllMahasiswaAlamat)
@@ -273,38 +245,12 @@ func (p *PostgreSQLRepo) SaveDosenAlamatByID(dataDosenAlamat *models.DosenAlamat
 	return nil
 }
 
-func (p *PostgreSQLRepo) ShowAllDosenAlamat(req *models.DosenModels) ([]*models.ShowAllDosenAlamatModels, error) {
-	var dataReq struct {
-		id      int64
-		nama    string
-		nidn    string
-		kondisi int64
-	}
+func (p *PostgreSQLRepo) ShowAllDosenAlamat(where string) ([]*models.ShowAllDosenAlamatModels, error) {
 
-	if req.ID > 0 {
-		dataReq.id = req.ID
-		dataReq.kondisi = 0
-	}
-	if req.Name != "" {
-		dataReq.nama = req.Name
-		dataReq.kondisi = 0
-	}
-	if req.Nidn != "" {
-		dataReq.nidn = req.Nidn
-		dataReq.kondisi = 0
-	}
-	if dataReq.id == 0 && dataReq.nama == "" && dataReq.nidn == "" {
-		dataReq.kondisi = 1
-	}
-
-	fmt.Println("id_dosen: ", dataReq.id)
-	fmt.Println("nama: ", dataReq.nama)
-	fmt.Println("nidn: ", dataReq.nidn)
-	fmt.Println("kondisi: ", dataReq.kondisi)
-
+	fmt.Println("where: ", where)
 	var AllDosenAlamat []*models.ShowAllDosenAlamatModels
 
-	err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, dataReq.id, dataReq.nama, dataReq.nidn, dataReq.kondisi)
+	err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, where)
 	if err != nil {
 		log.Println("Failed Query ShowAllDosenAlamat : ", err.Error())
 		return nil, fmt.Errorf(dsnErrors.ErrorDB)

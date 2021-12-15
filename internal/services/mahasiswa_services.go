@@ -124,15 +124,29 @@ func (s *service) SaveDosenAlamatByID(req *dto.AlamatDosenByIDReqDTO) error {
 }
 
 func (s *service) ShowAllDosenAlamat(req *dto.DosenParamReqDTO) ([]*dto.DosenAlamatResDTO, error) {
-	dtDosen := assembler.ToShowAllDosenAlamat(req)
-	getDosensMap := make(map[int]*dto.DosenAlamatResDTO)
+	// dtDosen := assembler.ToShowAllDosenAlamat(req)
 
-	fmt.Println("dataDosen: ", dtDosen)
-	dataDosenAlamat, err := s.repo.ShowAllDosenAlamat(dtDosen)
+	var where string
+	if req.IdDosen > 0 {
+		where = fmt.Sprintf("a.id = %d", req.IdDosen)
+	}
+	if req.Nama != "" {
+		where = fmt.Sprintf("a.nama = %s", req.Nama)
+	}
+	if req.Nidn != "" {
+		where = fmt.Sprintf("a.nidn = %s", req.Nidn)
+	}
+
+	if req.IdDosen == 0 && req.Nama == "" && req.Nidn == "" {
+		where = "1=1"
+	}
+
+	dataDosenAlamat, err := s.repo.ShowAllDosenAlamat(where)
 	if err != nil {
 		return nil, err
 	}
 
+	getDosensMap := make(map[int]*dto.DosenAlamatResDTO)
 	for _, val := range dataDosenAlamat {
 		if _, ok := getDosensMap[int(val.ID)]; !ok {
 			getDosensMap[int(val.ID)] = &dto.DosenAlamatResDTO{
