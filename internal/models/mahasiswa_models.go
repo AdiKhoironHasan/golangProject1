@@ -21,6 +21,14 @@ type ShowMahasiswaAlamatModels struct {
 	NoRumah string `db:"no_rumah"`
 }
 
+type GetMahasiswaAlamatsModels struct {
+	ID      int64  `db:"id"`
+	Name    string `db:"nama"`
+	Nim     string `db:"nim"`
+	Jalan   string `db:"jalan"`
+	NoRumah string `db:"no_rumah"`
+}
+
 // type DBAlamat struct {
 // 	id      int64
 // 	jalan   string

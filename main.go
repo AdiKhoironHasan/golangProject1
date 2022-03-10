@@ -8,6 +8,7 @@ import (
 
 	"github.com/AdiKhoironHasan/golangProject1/pkg/database"
 
+	integ "github.com/AdiKhoironHasan/golangProject1/internal/integration"
 	Repo "github.com/AdiKhoironHasan/golangProject1/internal/repository/postgresql"
 	"github.com/AdiKhoironHasan/golangProject1/internal/services"
 	handlers "github.com/AdiKhoironHasan/golangProject1/internal/transport/http"
@@ -57,7 +58,9 @@ func main() {
 	e.Use(m.CORS)
 
 	sqlrepo := Repo.NewRepo(db.Conn)
-	srv := services.NewService(sqlrepo)
+	integSrv := integ.NewService()
+	srv := services.NewService(sqlrepo, integSrv)
+	// srv := services.NewService(sqlrepo)
 	handlers.NewHttpHandler(e, srv)
 
 	go func() {

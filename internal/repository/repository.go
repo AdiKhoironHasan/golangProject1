@@ -7,6 +7,7 @@ type Repository interface {
 	UpdateMahasiswaNama(dataMahasiswa *models.MahasiswaModels) error
 	SaveAlamatId(dataAlamat *models.MahasiswaAlamatModels) error
 	ShowAllMahasiswaAlamat() ([]*models.ShowMahasiswaAlamatModels, error)
+	GetMahasiswaAlamat(where string) ([]*models.GetMahasiswaAlamatsModels, error)
 
 	SaveDosenAlamat(dataDosen *models.DosenModels, dataAlamat []*models.DosenAlamatModels) error
 	UpdateDosenNama(dataDosen *models.DosenModels) error
