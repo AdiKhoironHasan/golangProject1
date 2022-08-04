@@ -22,12 +22,12 @@ const (
 	ShowAllAlamat          = `SELECT id_mahasiswas, jalan, no_rumah FROM kampus.mahasiswa_alamats`
 	ShowAllMahasiswaAlamat = `SELECT a.id, a.nama, a.nim, b.jalan, b.no_rumah from kampus.mahasiswas a JOIN kampus.mahasiswa_alamats b ON a.id = b.id_mahasiswas`
 
-	SaveDosen                 = `INSERT INTO kampus.dosens (nama, nidn, created_at) VALUES ($1, $2, now()) RETURNING id`
-	SaveDosenAlamat           = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
-	UpdateDosenNama           = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
-	SaveDosenAlamatByID       = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
-	ShowAllDosenAlamat        = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens `
-	ShowAllDosenAlamatByParam = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens AND $1`
+	SaveDosen                      = `INSERT INTO kampus.dosens (nama, nidn, created_at) VALUES ($1, $2, now()) RETURNING id`
+	SaveDosenAlamat                = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
+	UpdateDosenNama                = `UPDATE kampus.dosens SET nama = $1, updated_at = now() where id = $2`
+	SaveDosenAlamatByID            = `INSERT INTO kampus.dosen_alamats (jalan, no_rumah, created_at, id_dosens) VALUES ($1,$2, now(), $3)`
+	ShowAllDosenAlamat             = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens `
+	ShowAllDosenAlamatByParam      = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens AND $1`
 	GetMahasiswaAlamatAllOrByParam = `SELECT a.id, a.nama, a.nim, b.jalan, b.no_rumah from kampus.mahasiswas a JOIN kampus.mahasiswa_alamats b ON a.id = b.id_mahasiswas
 	WHERE %s`
 )
@@ -252,6 +252,7 @@ func (p *PostgreSQLRepo) ShowAllDosenAlamat(where string) ([]*models.ShowAllDose
 	fmt.Println("where: ", where)
 	var AllDosenAlamat []*models.ShowAllDosenAlamatModels
 
+	// err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, where)
 	err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, where)
 	if err != nil {
 		log.Println("Failed Query ShowAllDosenAlamat : ", err.Error())

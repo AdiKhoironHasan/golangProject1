@@ -111,7 +111,7 @@ type AlamatRespDTO struct {
 }
 
 type GetMahasiswaAlamatReqDTO struct {
-	Authorization string `json:"Authorization" valid:"required" validname:"datetime"`
+	Authorization string `json:"Authorization" valid:"required" validname:"authorization"`
 	Signature     string `json:"signature" valid:"required" validname:"signature"`
 	DateTime      string `json:"datetime" valid:"required" validname:"datetime"`
 	Nama          string `json:"nama,omitempty,string"`
@@ -126,7 +126,8 @@ func (dto *GetMahasiswaAlamatReqDTO) Validate() error {
 }
 
 func (dto *GetMahasiswaAlamatReqDTO) customValidation() error {
-
+	// token = token-admin2021-03-12 09:00:00
+	// https://www.devglan.com/online-tools/hmac-sha256-online
 	signature := crypto.EncodeSHA256HMAC(util.GetBTBPrivKeySignature(), dto.Authorization, dto.DateTime)
 	if signature != dto.Signature {
 		if env.IsProduction() {

@@ -1,4 +1,4 @@
-appName: mahasiswaservice
+appName: goalangProject1
 
 server:
   port: "9000"
@@ -10,3 +10,14 @@ db:
   dbname: practice
   user: postgres
   password: passwords
+
+  integrations:
+    http_dial_timeout_seconds: 5
+    http_request_timeout_seconds: 10
+    externals:
+      http:
+        icanhazdadjoke:
+          host: "https://icanhazdadjoke.com"
+          endpoints:
+            random: "/"
+            byId: "/j/%s"

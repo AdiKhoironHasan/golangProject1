@@ -10,7 +10,7 @@ import (
 )
 
 type GetDadJokesInternalReqDTO struct {
-	Authorization string `json:"Authorization" valid:"required" validname:"datetime"`
+	Authorization string `json:"Authorization" valid:"required" validname:"authorization"`
 	Signature     string `json:"signature" valid:"required" validname:"signature"`
 	DateTime      string `json:"datetime" valid:"required" validname:"datetime"`
 	ID            string `json:"ID,omitempty,string" query:"ID"`

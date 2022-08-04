@@ -94,7 +94,6 @@ func (h *HttpHandler) SaveAlamatId(c echo.Context) error {
 		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
 	}
-
 	err := postDTO.Validate()
 	if err != nil {
 		log.Error(err.Error())

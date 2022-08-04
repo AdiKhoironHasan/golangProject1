@@ -24,14 +24,17 @@ func (s *integService) GetRandomDadJokes(req *dto.GetDadJokesInternalReqDTO) (*d
 
 	if req.ID != "" {
 		url = util.GetIntegURL("icanhazdadjoke", "byId")
+
 		url = fmt.Sprintf(url, req.ID)
+
 	} else {
 		url = util.GetIntegURL("icanhazdadjoke", "random")
 	}
 
+	// url = "https://icanhazdadjoke.com/"
+
 	getReq, err := http.NewRequest(http.MethodGet, url, nil)
 
-	// fmt.Println(err, "error atas")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request icanhazdadjoke getRandom: %v", err)
 	}
@@ -42,8 +45,8 @@ func (s *integService) GetRandomDadJokes(req *dto.GetDadJokesInternalReqDTO) (*d
 		Timeout: 15 * time.Second,
 	}
 	resp, err := client.Do(getReq)
-	// fmt.Println(err, "error bawah")
 	if err != nil {
+		// fmt.Println(getReq, "error bawah")
 		return nil, fmt.Errorf("failed to create http request icanhazdadjoke getRandom: %v", err)
 	}
 	log.Println("Success execute  : ", url)
