@@ -30,6 +30,8 @@ const (
 	ShowAllDosenAlamatByParam      = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens AND $1`
 	GetMahasiswaAlamatAllOrByParam = `SELECT a.id, a.nama, a.nim, b.jalan, b.no_rumah from kampus.mahasiswas a JOIN kampus.mahasiswa_alamats b ON a.id = b.id_mahasiswas
 	WHERE %s`
+	GetDosenAlamatAllOrByParam = `SELECT a.id, a.nama, a.nidn, b.jalan, b.no_rumah from kampus.dosens a JOIN kampus.dosen_alamats b ON a.id = b.id_dosens
+	WHERE %s`
 )
 
 var statement PreparedStatement
@@ -249,11 +251,16 @@ func (p *PostgreSQLRepo) SaveDosenAlamatByID(dataDosenAlamat *models.DosenAlamat
 
 func (p *PostgreSQLRepo) ShowAllDosenAlamat(where string) ([]*models.ShowAllDosenAlamatModels, error) {
 
-	fmt.Println("where: ", where)
+	// fmt.Println("where: ", where)
 	var AllDosenAlamat []*models.ShowAllDosenAlamatModels
-
-	// err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, where)
-	err := statement.showAllDosenAlamatByParam.Select(&AllDosenAlamat, where)
+	var query string
+	
+	if where != "" && where != "%s" {
+		query = fmt.Sprintf(GetDosenAlamatAllOrByParam, where)
+	} else {
+		query = fmt.Sprintf(GetDosenAlamatAllOrByParam, "1=1")
+	}
+	err := p.Conn.Select(&AllDosenAlamat, query)
 	if err != nil {
 		log.Println("Failed Query ShowAllDosenAlamat : ", err.Error())
 		return nil, fmt.Errorf(dsnErrors.ErrorDB)
