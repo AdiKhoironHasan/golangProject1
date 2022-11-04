@@ -202,7 +202,7 @@ func (h *HttpHandler) GetMahasiswaAlamat(c echo.Context) error {
 			Data:    nil,
 		})
 	}
-
+	fmt.Print("data handler", data)
 	var resp = dto.ResponseDTO{
 		Success: true,
 		Message: mhsConst.GetDataSuccess,

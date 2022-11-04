@@ -254,7 +254,7 @@ func (p *PostgreSQLRepo) ShowAllDosenAlamat(where string) ([]*models.ShowAllDose
 	// fmt.Println("where: ", where)
 	var AllDosenAlamat []*models.ShowAllDosenAlamatModels
 	var query string
-	
+
 	if where != "" && where != "%s" {
 		query = fmt.Sprintf(GetDosenAlamatAllOrByParam, where)
 	} else {
@@ -284,7 +284,7 @@ func (p *PostgreSQLRepo) GetMahasiswaAlamat(where string) ([]*models.GetMahasisw
 		log.Println("Failed Query GetMahasiswaAlamat: ", err.Error())
 		return data, fmt.Errorf(mhsErrors.ErrorDB)
 	}
-
+	fmt.Println(data)
 	if len(data) == 0 {
 		return data, fmt.Errorf(mhsErrors.ErrorDataNotFound)
 	}
